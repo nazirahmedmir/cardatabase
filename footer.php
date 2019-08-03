@@ -15,31 +15,27 @@ $( document ).ready(function()
 			backdrop: "static", //remove ability to close modal with click
 			keyboard: false, //remove option to close with keyboard
 			show: true //Display loader!
-		});
+		});		
 		
-		var Url = "http://www.carqueryapi.com/api/0.3/?callback=&cmd=getModel&model=74847&";
-		$.get
-		(
-			Url,
-			function(response) 
-			{
-				if (response.data) 
-				{					
-					alert (data);
-					$("#loadMe").modal("hide");
-				} 
-				else 
-				{
-					$("#output").html
-					(
-						'<div class="alert alert-warning"><h4>Uh oh!</h4></div>'
-					);
-				}
-			},
-			"json"
-		);
-	});
-  
+		$.ajax({
+        url: 'getdata.php',
+        type: 'GET',
+        async: true,
+        cache: false,
+        timeout: 30000,
+        error: function()
+		{
+            return true;
+        },
+        success: function(data)
+		{ 
+            alert (data);							
+			$("#loadMe").modal("hide");	
+        }
+		});
+	
+		
+	});  
 		
 	
 	$(document).delegate(".account_insert_btn",'click',function (event)
