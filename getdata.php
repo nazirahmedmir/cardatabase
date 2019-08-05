@@ -1,6 +1,9 @@
 <?php
 set_time_limit (200);
 require_once "config.php";
+$Entries=new Entries();
+$Entries->prepareupdate();
+
 $url="https://www.carqueryapi.com/api/0.3/?callback=?&cmd=getMakes";
 $Makes=json_decode(getData($url),true);
 $Makes=$Makes['Makes'];
@@ -16,6 +19,25 @@ foreach ($Makes as $Make)
 		$Cars=json_decode($Cars,true);
 		foreach ($Cars as $Car)
 		{
+			$Data=array();
+			
+			isset ($Car['model_make_id']) ? $Data['Make']=$Car['model_make_id'] : $Data['Make']='';
+			isset ($Car['model_name']) ? $Data['Name']=$Car['model_name'] : $Data['Name']='';
+			isset ($Car['model_trim']) ? $Data['Trim']=$Car['model_trim'] : $Data['Trim']='';
+			isset ($Car['model_year']) ? $Data['Year']=$Car['model_year'] : $Data['Year']='';
+			isset ($Car['model_body']) ? $Data['Body']=$Car['model_body'] : $Data['Body']='';
+			isset ($Car['model_engine_position']) ? $Data['EnginePosition']=$Car['model_engine_position'] : $Data['EnginePosition']='';
+			isset ($Car['model_engine_type']) ? $Data['EngineType']=$Car['model_engine_type'] : $Data['EngineType']='';
+			isset ($Car['model_engine_compression']) ? $Data['model_engine_compression']=$Car['model_make_id'] : $Data['EngineCompression']=null;
+			isset ($Car['model_engine_fuel']) ? $Data['EngineFuel']=$Car['model_engine_fuel'] : $Data['EngineFuel']='';
+			isset ($Car['make_country']) ? $Data['Country']=$Car['make_country'] : $Data['Country']='';
+			isset ($Car['model_weight_kg']) ? $Data['WeightKG']=$Car['model_weight_kg'] : $Data['WeightKG']=null;
+			isset ($Car['model_transmission_type']) ? $Data['TransmissionType']=$Car['model_transmission_type'] : $Data['TransmissionType']='';
+			$Data['Price']=rand(5000, 15000);
+			
+			$Entries->InsertNew($Data);
+			
+			unset ($Data);			
 			
 		}
 	}

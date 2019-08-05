@@ -14,6 +14,10 @@
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 <style>
 
+.table 
+{
+	font-size:.7em;
+}
 /** SPINNER CREATION **/
 
 .loader {

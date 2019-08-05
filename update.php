@@ -42,4 +42,50 @@ $page_title="Update Database";
     </div>
   </div>
 
+<?php
+$custom_scripts=<<<SCRIPTS
+
+$( document ).ready(function() 
+{
+		
+	$("#update-btn").on("click", function(e) 
+	{
+		e.preventDefault();
+		$("#loadMe").modal(
+		{
+			backdrop: "static", //remove ability to close modal with click
+			keyboard: false, //remove option to close with keyboard
+			show: true //Display loader!
+		});		
+		
+		$.ajax({
+        url: 'getdata.php',
+        type: 'GET',
+        async: true,
+        cache: false,
+        timeout: 30000,
+        error: function()
+		{
+            return true;
+        },
+        success: function(data)
+		{ 
+            alert (data);							
+			$("#loadMe").modal("hide");	
+        }
+		});
+	
+		
+	});  
+		
+	
+		
+		
+		
+		
+	});
+		
+SCRIPTS;
+?>
+
 <?php require_once ("footer.php");?>

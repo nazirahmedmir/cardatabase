@@ -1,9 +1,9 @@
 <?php
 class Database
 {
-    private $dsn = 'mysql:dbname=test;host=localhost';
-	private $user = 'mysql';
-	private $password = '';
+    private $dsn = 'mysql:dbname=cars;host=localhost';
+	private $user = 'root';
+	private $password = 'mysql';
 	
 	protected $dbh;
     function __construct()
@@ -12,7 +12,8 @@ class Database
 		
 		try 
 		{			
-			$this->dbh = new PDO($this->dsn, $this->user, $this->password);    
+			$this->dbh = new PDO($this->dsn, $this->user, $this->password); 
+			$this->dbh->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING );
 		} 
 		catch (PDOException $e) 
 		{

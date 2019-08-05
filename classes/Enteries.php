@@ -1,45 +1,88 @@
 <?php
 class Entries extends Database
-{
-    public $password_list;
-	public $username;
-	public $password;
-	
+{	
 	function __construct ()
 	{
-		parent::__construct();
+		parent::__construct();		
+	}
+	
+	
+	function GetList()
+	{		
+		$items=array();
 		
-		$stmt = $this->dbh->prepare("SELECT * FROM accounts");		
+		$stmt = $this->dbh->prepare("SELECT * FROM cars");
 		$stmt->execute();
 		
 		if($stmt->rowCount() > 0 )
 		{ 
 			while ($row=$stmt->fetch(PDO::FETCH_ASSOC))
 			{
-				$this->password_list[]=$row;			
+				$items[]=$row;
 			}
 		}
-		else
+		return $items;		
+	}	
+
+	function prepareupdate ()
+	{
+		$this->dbh->query ("TRUNCATE cars");
+		return true;
+	}
+	function InsertNew($Data)
+	{	
+		$stmt = $this->dbh->prepare("INSERT INTO cars (Make, Name, Trim, Year, Body, EnginePosition, EngineType, EngineCompression, EngineFuel, Image, Country, WeightKG, TransmissionType, Price, Tags) VALUES (:Make, :Name, :Trim, :Year, :Body, :EnginePosition, :EngineType, :EngineCompression, :EngineFuel, :Image, :Country, :WeightKG, :TransmissionType, :Price, :Tags)");
+        
+		$keys=array (
+				'Make', 'Name', 'Trim', 'Year', 'Body', 'EnginePosition', 'EngineType', 'EngineCompression', 'EngineFuel', 'Image', 'Country', 'WeightKG', 'TransmissionType', 'Price', 'Tags');
+				
+		foreach ($keys as $key)
 		{
-			$this->password_list=array ();
+			if (!isset ($Data[$key]))
+			{
+				$Data[$key]=null;
+			}
+		}
+		try 
+		{
+				
+				$this->dbh->beginTransaction();
+				$stmt->bindParam(':Make',$Data['Make'],PDO::PARAM_STR);
+				$stmt->bindParam(':Name',$Data['Name'],PDO::PARAM_STR);
+				$stmt->bindParam(':Trim',$Data['Trim'],PDO::PARAM_STR);
+				$stmt->bindParam(':Year',$Data['Year'],PDO::PARAM_INT);
+				$stmt->bindParam(':Body',$Data['Body'],PDO::PARAM_STR);
+				$stmt->bindParam(':EnginePosition',$Data['EnginePosition'],PDO::PARAM_STR);
+				$stmt->bindParam(':EngineType',$Data['EngineType'],PDO::PARAM_STR);
+				$stmt->bindParam(':EngineCompression',$Data['EngineCompression'],PDO::PARAM_INT);
+				$stmt->bindParam(':EngineFuel',$Data['EngineFuel'],PDO::PARAM_STR);
+				$stmt->bindParam(':Image',$Data['Image'],PDO::PARAM_STR);
+				$stmt->bindParam(':Country',$Data['Country'],PDO::PARAM_STR);
+				$stmt->bindParam(':WeightKG',$Data['WeightKG'],PDO::PARAM_INT);
+				$stmt->bindParam(':TransmissionType',$Data['TransmissionType'],PDO::PARAM_STR);
+				$stmt->bindParam(':Price',$Data['Price'],PDO::PARAM_INT);
+				$stmt->bindParam(':Tags',$Data['Tags'],PDO::PARAM_STR);
+				
+				$result=$stmt->execute(); 
+				if ($result)
+				{
+					$this->dbh->commit();					
+					
+				}
+				else
+				{
+					$this->dbh->rollback();
+					print_r($stmt->errorInfo());					
+				}
+				
+		}
+		catch (Exception $e)
+		{			
+			$this->dbh->rollback();
+			throw $e;
 		}
 		
-	}
-	
-	
-	function GetList()
-	{		
-		return $this->password_list;		
-	}
-
-	function InsertNew()
-	{		
-		$stmt = $this->dbh->prepare("INSERT INTO accounts (name, password) VALUES (:username,    
-        :password)");
-        
-        $stmt->bindParam(':username', $this->username);
-        $stmt->bindParam(':password', $this->password);        
-        $stmt->execute();        
+		
         return true;
 	}
 }
